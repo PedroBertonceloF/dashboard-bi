@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 from database import Base
 
 class User(Base):
@@ -15,3 +15,10 @@ class Dataset(Base):
     user_id = Column(Integer, index=True)
     original_filename = Column(String)
     file_path = Column(String)
+    
+    date_col = Column(String, nullable=True)
+    category_col = Column(String, nullable=True)
+    value_col = Column(String, nullable=True)
+    
+    is_cleaned = Column(Boolean, default=False)
+    cleaned_file_path = Column(String, nullable=True)

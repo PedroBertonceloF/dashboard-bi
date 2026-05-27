@@ -28,14 +28,16 @@ def process_and_clean_dataset(file_path: str, date_col: str, category_col: str, 
 
     original_rows = len(df)
 
-    # Optimize Date Parsing: 'mixed' format is much faster than default inference in Pandas 2.0+
-    # We also use cache=True to speed up repeated dates
+    # Global whitespace stripping for all string columns
+    df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
+
+    # Optimize Date Parsing
     df[date_col] = pd.to_datetime(df[date_col], errors='coerce', format='mixed')
 
     # Coerce invalid values to NaN
     df[value_col] = pd.to_numeric(df[value_col], errors='coerce')
 
-    # Optimize string empty check: vector string methods are faster than regex replace
+    # Replace empty strings with NA in category column before dropping
     df[category_col] = df[category_col].replace(r'^\s*$', pd.NA, regex=True)
 
     cleaned_df = df.dropna(subset=[date_col, category_col, value_col])

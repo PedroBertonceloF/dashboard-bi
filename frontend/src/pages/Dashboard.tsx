@@ -373,10 +373,10 @@ export const Dashboard = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
                 
                 {/* Time Series Chart */}
-                <div style={{ height: '400px', width: '100%', background: 'white', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px' }}>
-                  <h4 style={{ textAlign: 'center', marginBottom: '1rem', color: '#333' }}>Trend Over Time ({valueCol} by {dateCol})</h4>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={timeSeriesData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <div style={{ width: '100%', background: 'white', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px' }}>
+                  <h4 style={{ textAlign: 'center', marginBottom: '1.5rem', color: '#333' }}>Trend Over Time ({valueCol} by {dateCol})</h4>
+                  <ResponsiveContainer width="100%" height={350}>
+                    <LineChart data={timeSeriesData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} />
                       <XAxis dataKey="date" tick={{ fill: '#666' }} />
                       <YAxis tick={{ fill: '#666' }} />
@@ -384,17 +384,17 @@ export const Dashboard = () => {
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
                         formatter={(value: any) => Number(value).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       />
-                      <Legend />
+                      <Legend wrapperStyle={{ paddingTop: '20px' }} />
                       <Line type="monotone" dataKey="value" name={valueCol} stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
 
                 {/* Category Bar Chart */}
-                <div style={{ height: '400px', width: '100%', background: 'white', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px' }}>
-                  <h4 style={{ textAlign: 'center', marginBottom: '1rem', color: '#333' }}>Total by Category ({valueCol} by {categoryCol})</h4>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={categoryData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <div style={{ width: '100%', background: 'white', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px' }}>
+                  <h4 style={{ textAlign: 'center', marginBottom: '1.5rem', color: '#333' }}>Total by Category ({valueCol} by {categoryCol})</h4>
+                  <ResponsiveContainer width="100%" height={350}>
+                    <BarChart data={categoryData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} />
                       <XAxis dataKey="category" tick={{ fill: '#666' }} />
                       <YAxis tick={{ fill: '#666' }} />
@@ -402,7 +402,7 @@ export const Dashboard = () => {
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
                         formatter={(value: any) => Number(value).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       />
-                      <Legend />
+                      <Legend wrapperStyle={{ paddingTop: '20px' }} />
                       <Bar dataKey="value" name={valueCol} fill="#10b981" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>

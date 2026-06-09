@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Response
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, ConfigDict
@@ -151,8 +151,10 @@ class KPIResponse(BaseModel):
     average: float
     row_count: int
 
+from typing import Optional
+
 @app.get("/api/datasets/{dataset_id}/kpis", response_model=KPIResponse)
-def get_dataset_kpis(dataset_id: int, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+def get_dataset_kpis(dataset_id: int, start_date: Optional[str] = None, end_date: Optional[str] = None, categories: Optional[str] = None, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
     db_dataset = db.query(models.Dataset).filter(models.Dataset.id == dataset_id, models.Dataset.user_id == current_user.id).first()
     if not db_dataset:
         raise HTTPException(status_code=404, detail="Dataset not found")
@@ -160,7 +162,7 @@ def get_dataset_kpis(dataset_id: int, current_user: models.User = Depends(get_cu
     if not db_dataset.is_cleaned or not db_dataset.cleaned_file_path:
         raise HTTPException(status_code=400, detail="Dataset must be cleaned before generating KPIs")
         
-    kpis = analytics.calculate_kpis(db_dataset.cleaned_file_path, db_dataset.value_col)
+    kpis = analytics.calculate_kpis(db_dataset.cleaned_file_path, db_dataset.date_col, db_dataset.category_col, db_dataset.value_col, start_date, end_date, categories)
     
     return kpis
 
@@ -174,15 +176,30 @@ class CategoryPoint(ChartPoint):
     category: str
 
 @app.get("/api/datasets/{dataset_id}/charts/timeseries", response_model=list[TimeSeriesPoint])
-def get_timeseries(dataset_id: int, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+def get_timeseries(dataset_id: int, start_date: Optional[str] = None, end_date: Optional[str] = None, categories: Optional[str] = None, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
     db_dataset = db.query(models.Dataset).filter(models.Dataset.id == dataset_id, models.Dataset.user_id == current_user.id).first()
     if not db_dataset or not db_dataset.is_cleaned:
         raise HTTPException(status_code=404, detail="Dataset not found or not cleaned")
-    return analytics.generate_timeseries(db_dataset.cleaned_file_path, db_dataset.date_col, db_dataset.value_col)
+    return analytics.generate_timeseries(db_dataset.cleaned_file_path, db_dataset.date_col, db_dataset.category_col, db_dataset.value_col, start_date, end_date, categories)
 
 @app.get("/api/datasets/{dataset_id}/charts/categories", response_model=list[CategoryPoint])
-def get_categories(dataset_id: int, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+def get_categories(dataset_id: int, start_date: Optional[str] = None, end_date: Optional[str] = None, categories: Optional[str] = None, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
     db_dataset = db.query(models.Dataset).filter(models.Dataset.id == dataset_id, models.Dataset.user_id == current_user.id).first()
     if not db_dataset or not db_dataset.is_cleaned:
         raise HTTPException(status_code=404, detail="Dataset not found or not cleaned")
-    return analytics.generate_category_chart(db_dataset.cleaned_file_path, db_dataset.category_col, db_dataset.value_col)
+    return analytics.generate_category_chart(db_dataset.cleaned_file_path, db_dataset.date_col, db_dataset.category_col, db_dataset.value_col, start_date, end_date, categories)
+
+@app.get("/api/datasets/{dataset_id}/export")
+def export_dataset(dataset_id: int, start_date: Optional[str] = None, end_date: Optional[str] = None, categories: Optional[str] = None, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    db_dataset = db.query(models.Dataset).filter(models.Dataset.id == dataset_id, models.Dataset.user_id == current_user.id).first()
+    if not db_dataset or not db_dataset.is_cleaned:
+        raise HTTPException(status_code=404, detail="Dataset not found or not cleaned")
+    
+    csv_text = analytics.generate_export_csv(db_dataset.cleaned_file_path, db_dataset.date_col, db_dataset.category_col, db_dataset.value_col, start_date, end_date, categories)
+    
+    filename = f"export_{dataset_id}.csv"
+    return Response(
+        content=csv_text,
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )

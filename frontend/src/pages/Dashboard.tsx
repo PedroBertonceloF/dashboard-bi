@@ -25,14 +25,16 @@ export const Dashboard = () => {
   // Stats state
   const [stats, setStats] = useState<{original_rows: number, cleaned_rows: number, dropped_rows: number} | null>(null);
 
-  // KPI state
-  const [kpis, setKpis] = useState<{total_sum: number, average: number, row_count: number} | null>(null);
-  const [loadingKpis, setLoadingKpis] = useState(false);
+  // Filter state
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [filterCategories, setFilterCategories] = useState('');
 
-  // Charts state
+  // KPI and Charts state
+  const [kpis, setKpis] = useState<{total_sum: number, average: number, row_count: number} | null>(null);
   const [timeSeriesData, setTimeSeriesData] = useState<any[] | null>(null);
   const [categoryData, setCategoryData] = useState<any[] | null>(null);
-  const [loadingCharts, setLoadingCharts] = useState(false);
+  const [loadingDashboard, setLoadingDashboard] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -138,55 +140,68 @@ export const Dashboard = () => {
     }
   };
 
-  const fetchKpis = async () => {
+  const loadDashboardData = async () => {
     if (!datasetId) return;
-    setLoadingKpis(true);
+    setLoadingDashboard(true);
     setError('');
     
     try {
-      const response = await fetch(`/api/datasets/${datasetId}/kpis`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const params = new URLSearchParams();
+      if (startDate) params.append('start_date', startDate);
+      if (endDate) params.append('end_date', endDate);
+      if (filterCategories) params.append('categories', filterCategories);
+      const query = params.toString();
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || 'Failed to fetch KPIs');
-      }
-
-      setKpis(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoadingKpis(false);
-    }
-  };
-
-  const fetchCharts = async () => {
-    if (!datasetId) return;
-    setLoadingCharts(true);
-    setError('');
-    
-    try {
-      const [timeRes, catRes] = await Promise.all([
-        fetch(`/api/datasets/${datasetId}/charts/timeseries`, { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch(`/api/datasets/${datasetId}/charts/categories`, { headers: { 'Authorization': `Bearer ${token}` } })
+      const [kpiRes, timeRes, catRes] = await Promise.all([
+        fetch(`/api/datasets/${datasetId}/kpis?${query}`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`/api/datasets/${datasetId}/charts/timeseries?${query}`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`/api/datasets/${datasetId}/charts/categories?${query}`, { headers: { 'Authorization': `Bearer ${token}` } })
       ]);
 
+      const kpiData = await kpiRes.json();
       const timeData = await timeRes.json();
       const catData = await catRes.json();
 
+      if (!kpiRes.ok) throw new Error(kpiData.detail || 'Failed to fetch KPIs');
       if (!timeRes.ok) throw new Error(timeData.detail || 'Failed to fetch timeseries');
       if (!catRes.ok) throw new Error(catData.detail || 'Failed to fetch categories');
 
+      setKpis(kpiData);
       setTimeSeriesData(timeData);
       setCategoryData(catData);
     } catch (err: any) {
       setError(err.message);
     } finally {
-      setLoadingCharts(false);
+      setLoadingDashboard(false);
+    }
+  };
+
+  const handleExport = async () => {
+    if (!datasetId) return;
+    try {
+      const params = new URLSearchParams();
+      if (startDate) params.append('start_date', startDate);
+      if (endDate) params.append('end_date', endDate);
+      if (filterCategories) params.append('categories', filterCategories);
+      const query = params.toString();
+
+      const response = await fetch(`/api/datasets/${datasetId}/export?${query}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) throw new Error("Export failed");
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `export_${datasetId}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      setError(err.message);
     }
   };
 
@@ -281,44 +296,74 @@ export const Dashboard = () => {
             </li>
           </ul>
           
-          <button style={{ marginTop: '1rem' }} onClick={fetchKpis} disabled={loadingKpis}>
-            {loadingKpis ? 'Loading Analytics...' : 'Generate Dashboard KPIs'}
+          <button style={{ marginTop: '1rem' }} onClick={loadDashboardData} disabled={loadingDashboard}>
+            {loadingDashboard ? 'Loading Dashboard...' : 'Generate Dashboard'}
           </button>
         </div>
       )}
 
-      {kpis && (
+      {stats && (kpis || loadingDashboard) && (
         <div style={{ marginTop: '2rem' }}>
-          <h3>Core KPIs</h3>
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <div style={{ flex: 1, padding: '1.5rem', background: '#f0f4f8', borderRadius: '8px', border: '1px solid #d9e2ec', textAlign: 'center' }}>
-              <h4 style={{ margin: '0 0 0.5rem 0', color: '#334e68' }}>Total {valueCol}</h4>
-              <p style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold', color: '#102a43' }}>
-                {kpis.total_sum.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </p>
-            </div>
-            
-            <div style={{ flex: 1, padding: '1.5rem', background: '#f0f4f8', borderRadius: '8px', border: '1px solid #d9e2ec', textAlign: 'center' }}>
-              <h4 style={{ margin: '0 0 0.5rem 0', color: '#334e68' }}>Average {valueCol}</h4>
-              <p style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold', color: '#102a43' }}>
-                {kpis.average.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </p>
-            </div>
-            
-            <div style={{ flex: 1, padding: '1.5rem', background: '#f0f4f8', borderRadius: '8px', border: '1px solid #d9e2ec', textAlign: 'center' }}>
-              <h4 style={{ margin: '0 0 0.5rem 0', color: '#334e68' }}>Valid Records</h4>
-              <p style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold', color: '#102a43' }}>
-                {kpis.row_count}
-              </p>
+          
+          {/* Filters Section */}
+          <div style={{ marginBottom: '2rem', padding: '1.5rem', background: '#f5f5f5', borderRadius: '8px', border: '1px solid #ddd' }}>
+            <h3 style={{ marginTop: 0 }}>Interactive Filters</h3>
+            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Start Date</label>
+                <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} style={{ padding: '0.5rem' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>End Date</label>
+                <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} style={{ padding: '0.5rem' }} />
+              </div>
+              <div style={{ flex: 1, minWidth: '250px' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Categories (comma separated)</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. Category A, Category B" 
+                  value={filterCategories} 
+                  onChange={e => setFilterCategories(e.target.value)} 
+                  style={{ width: '100%', padding: '0.5rem' }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button onClick={loadDashboardData} disabled={loadingDashboard} style={{ padding: '0.5rem 1rem', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                  {loadingDashboard ? 'Applying...' : 'Apply Filters'}
+                </button>
+                <button onClick={handleExport} style={{ padding: '0.5rem 1rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                  Export CSV
+                </button>
+              </div>
             </div>
           </div>
-          
-          {!timeSeriesData && (
-            <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-              <button onClick={fetchCharts} disabled={loadingCharts}>
-                {loadingCharts ? 'Loading Charts...' : 'Generate Dashboard Charts'}
-              </button>
-            </div>
+
+          {kpis && (
+            <>
+              <h3>Core KPIs</h3>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <div style={{ flex: 1, padding: '1.5rem', background: '#f0f4f8', borderRadius: '8px', border: '1px solid #d9e2ec', textAlign: 'center' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: '#334e68' }}>Total {valueCol}</h4>
+                  <p style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold', color: '#102a43' }}>
+                    {kpis.total_sum.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </p>
+                </div>
+                
+                <div style={{ flex: 1, padding: '1.5rem', background: '#f0f4f8', borderRadius: '8px', border: '1px solid #d9e2ec', textAlign: 'center' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: '#334e68' }}>Average {valueCol}</h4>
+                  <p style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold', color: '#102a43' }}>
+                    {kpis.average.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </p>
+                </div>
+                
+                <div style={{ flex: 1, padding: '1.5rem', background: '#f0f4f8', borderRadius: '8px', border: '1px solid #d9e2ec', textAlign: 'center' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: '#334e68' }}>Valid Records</h4>
+                  <p style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold', color: '#102a43' }}>
+                    {kpis.row_count}
+                  </p>
+                </div>
+              </div>
+            </>
           )}
 
           {timeSeriesData && categoryData && (
@@ -363,12 +408,6 @@ export const Dashboard = () => {
                   </ResponsiveContainer>
                 </div>
 
-              </div>
-
-              <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-                <button onClick={() => alert("Próximo passo: Issue #6 Interatividade!")}>
-                  Continue to Interactive Filters
-                </button>
               </div>
 
             </div>

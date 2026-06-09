@@ -367,8 +367,8 @@ export const Dashboard = () => {
           )}
 
           {timeSeriesData && categoryData && (
-            <div style={{ marginTop: '3rem' }}>
-              <h3>Dashboard Visualizations</h3>
+            <div style={{ marginTop: '3rem', backgroundColor: '#18181b', padding: '2rem', borderRadius: '12px' }}>
+              <h3 style={{ color: 'white', textAlign: 'center', marginBottom: '2rem' }}>Dashboard Visualizations</h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
                 
@@ -406,6 +406,13 @@ export const Dashboard = () => {
                       <Bar dataKey="value" name={valueCol} fill="#10b981" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
+                </div>
+
+                <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                  <button onClick={handleExport} style={{ padding: '0.75rem 2rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '1.1rem', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Export Dashboard to CSV
+                  </button>
                 </div>
 
               </div>

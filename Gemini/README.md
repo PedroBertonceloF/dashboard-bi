@@ -73,6 +73,6 @@ pytest tests/
 
 ## 🤖 Relatórios de IA (Gemini & Claude)
 
-Este repositório foi objeto de um estudo de desenvolvimento assistido.
-Todos os dados brutos e relatórios de avaliação do desempenho dos Agentes (Gemini e Claude) sobre os 5 laboratórios metodológicos propostos estão disponíveis na pasta `docs/`.
-As amostras de código e arquivos experimentais gerados pelo Claude, que depois foram revertidos para não interferir na aplicação final, encontram-se arquivados na pasta `Claude_Files/` da raiz para fins de auditoria.
+Este projeto foi objeto de um estudo comparativo de desenvolvimento assistido por IA.
+Os relatórios de avaliação do Gemini CLI sobre os 5 laboratórios metodológicos propostos estão disponíveis na pasta `docs/` deste projeto.
+A implementação equivalente gerada pelo Claude está na pasta [`../Claude/`](../Claude/), e a comparação completa entre as duas ferramentas pode ser vista em [`../apresentacao.html`](../apresentacao.html).

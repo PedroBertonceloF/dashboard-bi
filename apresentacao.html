@@ -6,14 +6,17 @@
   <title>Avaliação de IAs para Geração de Código — WEB-02</title>
   <style>
     :root {
-      --bg: #0f1117;
-      --surface: #1a1d2e;
-      --surface2: #252840;
-      --border: #2e3150;
+      --bg: #0a1f1e;
+      --surface: #0f2e2b;
+      --surface2: #15433d;
+      --border: #1f5a52;
       --accent-claude: #cc785c;
       --accent-gemini: #4285f4;
-      --text: #e2e4f0;
-      --text-muted: #8b8fa8;
+      --accent: #2dd4bf;
+      --accent-soft: #5eead4;
+      --accent-softer: #99f6e4;
+      --text: #f5fffd;
+      --text-muted: #8fb8b1;
       --radius: 8px;
     }
 
@@ -40,7 +43,7 @@
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 3px;
-      background: linear-gradient(90deg, var(--accent-claude), #7c85f5, var(--accent-gemini));
+      background: linear-gradient(90deg, var(--accent-claude), var(--accent), var(--accent-gemini));
     }
     header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: .4rem; }
     header p  { color: var(--text-muted); font-size: .95rem; }
@@ -102,7 +105,7 @@
     .tab-btn:hover { color: var(--text); background: var(--surface2); }
     .tab-btn.active {
       color: var(--text);
-      border-bottom-color: #7c85f5;
+      border-bottom-color: var(--accent);
       background: var(--surface2);
     }
     .tab-btn.app-claude.active { border-bottom-color: var(--accent-claude); }
@@ -125,7 +128,7 @@
     .progress-fill {
       height: 100%;
       width: 16.66%;
-      background: linear-gradient(90deg, var(--accent-claude), #7c85f5, var(--accent-gemini));
+      background: linear-gradient(90deg, var(--accent-claude), var(--accent), var(--accent-gemini));
       transition: width .3s ease;
     }
 
@@ -149,12 +152,12 @@
       margin-bottom: 1.5rem;
       padding-bottom: .6rem;
       border-bottom: 1px solid var(--border);
-      color: #a5b4fc;
+      color: var(--accent-soft);
     }
     .content-panel h3 {
       font-size: 1.05rem;
       margin: 1.5rem 0 .6rem;
-      color: #c7d2fe;
+      color: var(--accent-softer);
     }
     .content-panel p, .content-panel li {
       line-height: 1.75;
@@ -202,7 +205,7 @@
     }
     .compare-table th {
       background: var(--surface2);
-      color: #a5b4fc;
+      color: var(--accent-soft);
       font-weight: 600;
     }
     .compare-table tbody tr:hover td { background: rgba(255,255,255,.03); }
@@ -268,7 +271,7 @@
     /* Callout / destaque */
     .callout {
       background: var(--surface2);
-      border-left: 3px solid #7c85f5;
+      border-left: 3px solid var(--accent);
       border-radius: 0 var(--radius) var(--radius) 0;
       padding: .9rem 1.2rem;
       margin: 1.2rem 0;
@@ -308,7 +311,7 @@
       border: 1px solid var(--border);
       border-radius: 4px;
     }
-    .app-bar a:hover { color: var(--text); border-color: #7c85f5; }
+    .app-bar a:hover { color: var(--text); border-color: var(--accent); }
     iframe {
       flex: 1;
       border: none;
@@ -332,7 +335,7 @@
       border-radius: 4px;
       padding: .4rem .8rem;
       font-size: .85rem;
-      color: #a5b4fc;
+      color: var(--accent-soft);
     }
   </style>
 </head>

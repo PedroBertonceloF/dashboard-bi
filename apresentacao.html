@@ -564,37 +564,47 @@
         <div class="prompt-col-title gemini">Gemini CLI</div>
 
         <div class="prompt-item">
-          <span class="prompt-num">Prompt 1 — Kickoff</span>
+          <span class="prompt-num">Prompt 1 — Entrevista (grill-with-docs)</span>
           <p class="prompt-text">"leia o arquivo COMOFAZER que esta nessa PASTA, e use o grill-with-docs"</p>
-          <span class="prompt-action">O agente leu os requisitos, usou a skill <code>grill-with-docs</code> para entrevistar o usuário, identificou um conflito entre o escopo do WEB-02 e o checklist de segurança da disciplina e sugeriu proativamente criar login/registro. Gerou PRD e ADRs sozinho.</span>
+          <span class="prompt-action">O agente leu os requisitos e usou a skill <code>grill-with-docs</code> para entrevistar o usuário, fazendo perguntas sobre o escopo. Identificou um conflito entre o escopo do WEB-02 e o checklist de segurança da disciplina e sugeriu proativamente criar login/registro. As respostas dadas pelo usuário nessa entrevista alimentaram os próximos passos.</span>
         </div>
         <div class="prompt-item">
-          <span class="prompt-num">Prompt 2 — Implementação (TDD)</span>
+          <span class="prompt-num">Prompt 2 — Geração do PRD</span>
+          <p class="prompt-text">"/to-prd"</p>
+          <span class="prompt-action">Com base nas respostas da entrevista, o agente gerou o PRD do projeto, com critérios de aceitação mensuráveis e as decisões de arquitetura (ADRs).</span>
+        </div>
+        <div class="prompt-item">
+          <span class="prompt-num">Prompt 3 — Quebra em issues</span>
+          <p class="prompt-text">"/to-issues"</p>
+          <span class="prompt-action">O agente quebrou o PRD em issues numeradas, cada uma com título, descrição, critérios de aceitação e dependências — é a Issue #2 dessa quebra que aparece no próximo prompt.</span>
+        </div>
+        <div class="prompt-item">
+          <span class="prompt-num">Prompt 4 — Implementação (TDD)</span>
           <p class="prompt-text">"vamos fazer a 2 com tdd"</p>
           <span class="prompt-action">Referente à Issue #2 (upload de CSV). O agente criou a tabela <code>datasets</code>, a rota de upload e o teste automatizado, seguindo o ciclo RED → GREEN do TDD.</span>
         </div>
         <div class="prompt-item">
-          <span class="prompt-num">Prompt 3 — Debug de performance</span>
+          <span class="prompt-num">Prompt 5 — Debug de performance</span>
           <p class="prompt-text">"acho que escolhi um arquivo grande, esta demorando mt para processar"</p>
           <span class="prompt-action">O agente identificou que o Pandas usava inferência padrão de datas (lenta), corrigiu para <code>format='mixed'</code> e vetorizou as operações de string, deixando o processamento instantâneo.</span>
         </div>
         <div class="prompt-item">
-          <span class="prompt-num">Prompt 4 — Debug de ambiente (Windows)</span>
+          <span class="prompt-num">Prompt 6 — Debug de ambiente (Windows)</span>
           <p class="prompt-text">"ele nao faz login nem faz registro também..."</p>
           <span class="prompt-action">O agente diagnosticou dois problemas de infraestrutura no Windows: o "QuickEdit Mode" do terminal pausando o Uvicorn (ensinou a destravar com ESC) e um processo fantasma preso na porta 8000 (mudou autonomamente para a porta 8001).</span>
         </div>
         <div class="prompt-item">
-          <span class="prompt-num">Prompt 5 — Melhoria (higienização)</span>
+          <span class="prompt-num">Prompt 7 — Melhoria (higienização)</span>
           <p class="prompt-text">"quero fazer com que eu limpe não só os dados que eu escolhi, mas todos os dados limpos da tabela inteira"</p>
           <span class="prompt-action">O agente usou a skill <code>interview-me</code> para entender a real intenção e implementou via TDD: preserva todas as colunas originais, remove espaços em branco de todos os textos e aplica exclusão rigorosa só nas colunas mapeadas.</span>
         </div>
         <div class="prompt-item">
-          <span class="prompt-num">Prompt 6 — Ajuste visual</span>
+          <span class="prompt-num">Prompt 8 — Ajuste visual</span>
           <p class="prompt-text">"não quero que a legenda do grafico fique para fora..."</p>
           <span class="prompt-action">Ajustou paddings de CSS e margens internas dos gráficos Recharts para que eixos e legendas ficassem legíveis em qualquer resolução.</span>
         </div>
         <div class="prompt-item">
-          <span class="prompt-num">Prompt 7 — Documentação final</span>
+          <span class="prompt-num">Prompt 9 — Documentação final</span>
           <p class="prompt-text">"crie uma pasta chamada execução e coloque so o que escrever para exectuar o back e o front"</p>
           <span class="prompt-action">Criou a pasta <code>execução/</code> e o arquivo <code>COMO_RODAR.md</code>, centralizando o manual de instruções do projeto.</span>
         </div>

@@ -420,14 +420,39 @@
     </ul>
 
     <h3>Laboratórios de avaliação</h3>
-    <p>Cinco laboratórios foram definidos para medir aspectos específicos de cada solução:</p>
+    <p>
+      Defini cinco laboratórios para medir aspectos específicos de cada solução. Minha intenção não era
+      apenas verificar se cada IA conseguia "fazer funcionar", mas sim isolar dimensões de engenharia que
+      costumam separar um protótipo de algo pronto para produção — preocupações que eu, como desenvolvedor,
+      normalmente teria que lembrar de pedir explicitamente, e quis ver se a IA já antecipava isso sozinha:
+    </p>
     <ol>
-      <li><strong>Lab 1 – Performance de Ingestão:</strong> parsing de datas com <code>format='mixed'</code> e <code>cache=True</code> para suportar 1M+ linhas</li>
-      <li><strong>Lab 2 – Edge Cases:</strong> tratamento de CSV malformado (<code>on_bad_lines='skip'</code>), colunas extras preservadas</li>
-      <li><strong>Lab 3 – Segurança:</strong> JWT com expiração, bcrypt com salt, proteção contra SQL Injection via ORM, segredos em variáveis de ambiente</li>
-      <li><strong>Lab 4 – UX e Conectividade:</strong> proxy Vite para resolver CORS, feedback visual de erros no frontend (React + Recharts)</li>
-      <li><strong>Lab 5 – Resiliência:</strong> robustez do pipeline de limpeza sem perda de dados não mapeados</li>
+      <li><strong>Lab 1 – Performance de Ingestão</strong> (<code>format='mixed'</code>, <code>cache=True</code>
+          para 1M+ linhas): quis saber se a IA pensa em escala sem eu pedir. Qualquer solução resolve um CSV
+          de 100 linhas; o que me interessava era se ela já antecipava 1M+ linhas, usando parsing vetorizado
+          em vez de iterar linha a linha.</li>
+      <li><strong>Lab 2 – Edge Cases</strong> (CSV malformado com <code>on_bad_lines='skip'</code>, colunas
+          extras preservadas): quis ver como cada IA lida com dados do mundo real, que quase sempre vêm
+          sujos. O ponto era saber se uma linha malformada seria tratada como exceção isolada (descartando
+          só ela) ou se derrubaria o processamento do arquivo inteiro.</li>
+      <li><strong>Lab 3 – Segurança</strong> (JWT com expiração, bcrypt com salt, proteção contra SQL
+          Injection via ORM, segredos em variáveis de ambiente): quis avaliar se a IA aplica boas práticas de
+          segurança por padrão, mesmo sem eu pedir item por item. Para mim, esse é o lab que mais separa
+          "código que funciona" de "código que eu deixaria ir para produção".</li>
+      <li><strong>Lab 4 – UX e Conectividade</strong> (proxy Vite para resolver CORS, feedback visual de
+          erros no frontend com React + Recharts): quis ver como cada IA resolve um problema de integração
+          real dentro de uma restrição que eu impus ("sem mexer no Python"), e se entregava uma experiência
+          de usuário coerente, com feedback de erro e gráficos.</li>
+      <li><strong>Lab 5 – Resiliência</strong> (robustez do pipeline de limpeza sem perda de dados não
+          mapeados): complementa o Lab 2 — aqui eu queria saber se a limpeza de dados é robusta e não
+          destrutiva, preservando o que eu não mapeei e se sustentando em variações de formato sem precisar
+          reescrever tudo.</li>
     </ol>
+    <p>
+      Em resumo, cada laboratório simula uma exigência que eu faria depois que o "MVP" já estivesse pronto —
+      e meu objetivo era medir o quanto cada ferramenta já antecipava essas exigências sem que eu precisasse
+      pedir explicitamente.
+    </p>
 
     <h3>Coleta de evidências</h3>
     <ul>

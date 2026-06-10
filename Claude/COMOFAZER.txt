@@ -1,0 +1,60 @@
+1. Objetivo e visao geral
+Este trabalho tem como objetivo avaliar, de forma experimental e comparativa, ferramentas
+de IA para geração de código-fonte. Cada grupo devera resolver um problema proposto
+utilizando ferramentas de IA e registrar o processo de construção, os prompts, as decisões
+tomadas e os resultados. A avaliação deve considerar corretude, qualidade e organização do
+código, critérios de segurança, e usabilidade/utilidade da ferramenta, etc.
+2. Metodologia (o que o grupo deve fazer)
+• Cada grupo com dois ou três alunos deve escolher 1 problema da lista (Secao 4).
+• Cada grupo deve escolher duas ou três ferramentas de IA para geração de códigofonte. As ferramentas usadas no grupo devem ser diferentes (a ideia é que o grupo
+consiga avaliar mais de uma ferramenta para o mesmo problema).
+• Grupos com dois alunos avaliam duas ferramentas, grupos com três alunos avaliam
+três ferramentas.
+• Definir critérios e métricas de avaliação (Seção 3) e como serão coletadas as evidências
+(testes, logs, screenshots, tempo, custo).
+• Implementar a solução em um repósitório versionado, mantendo um diário de
+prompts e registrando falhas e correções.
+• Criar testes automatizados e avaliar a corretude do Código Gerado com base nas
+especificidades de cada aplicação.
+• Realizar uma avaliação crítica: o que funcionou, o que falhou, riscos, quanto você
+precisou interferir para corrigir o código, economia de tempo de programação,
+facilidade para entendimento do código gerado, recomendações de uso, entre outroscritérios a serem definidos pelo grupo.
+• Apresentar seus experimentos e resultados oralmente, mostrando aos colegas da
+turma o sistema em funcionamento e os resultados da avaliação.
+2.1 Entregaveis
+• Repositório com Código-fonte, README (como executar) e histórico de commits.
+• Relatório de 4 a 7 páginas contendo: problema escolhido, ferramenta(s), metodologia,
+resultados, análise crítica e recomendações. O relatório também deve incluir o
+conjunto de testes realizados e as evidências de execução.
+• Diário de prompts: prompts principais, iterações e justificativas das mudanças.
+3. Critérios para avaliação e comparação das ferramentas
+• Corretude e testes: atende requisitos e critérios de aceitação, o código passa nos
+testes, facilidade e assistência para tratamento de erros.
+• Qualidade e organização do código: arquitetura, legibilidade, padrões, modularização,
+documentação mínima.
+• Interface: fluxo, consistência, mensagens de erro, acessibilidade básica.
+• Segurança e boas práticas: validacão de entrada, controle de acesso, dependências e
+riscos básicos.
+• Usabilidade/utilidade da ferramenta de IA: facilidade de uso, integração no workflow,
+tempo economizado, limitações e custo.
+3.3 Checklist básico de segurança
+• Validação das entradas (quando aplicavel).
+• Proteção contra injeção (exemplo: SQL injection)
+• Senhas com hash e salt; tokens com expiração; controle de acesso;
+• Segredos (chaves, tokens) fora do repositório (variaveis de ambiente).
+• Nao registrar dados sensíveis em logs e cuidado com dados pessoais (LGPD).
+WEB-02 - Dashboard de BI/Analytics a partir de CSV (KPIs + filtros)
+Objetivo: Carregar dados e gerar KPIs (indicador-chave de desempenho) e visualizações com
+filtros, de forma reprodutivel.
+Funcionalidades minimas:
+• Upload de CSV com pre-visualização (primeiras linhas).
+• Selecao/validacao de colunas (ex.: data, categoria, valor).
+• Limpeza básica: tratar vazios, datas inválidas, separador decimal, espaços em branco.
+• Dois gráficos (ex.: série temporal e barras por categoria).
+• Filtros: intervalo de datas e categoria (multi-seleção).
+• Exportacao: relatório simples (HTML/PDF) ou CSV com KPIs.
+Critérios de aceitação:
+• KPIs conferem com calculo manual em uma amostra de validação.
+• Filtros atualizam KPIs e gráficos corretamente.
+• Erros de CSV malformado/coluna ausente sao tratados com mensagem clara.
+• Nao inventar números: resultados devem derivar exclusivamente do CSV.

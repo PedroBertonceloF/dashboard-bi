@@ -16,4 +16,4 @@ dist/
 build/
 
 # Uploads
-backend/uploads/
+**/uploads/

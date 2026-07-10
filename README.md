@@ -1,4 +1,4 @@
-# WEB-02 BI Dashboard 📊
+# BI Dashboard 📊
 
 Uma aplicação Client-Server completa projetada para ingestão, higienização e visualização interativa de dados tabulares (CSV). O sistema permite que os usuários façam upload de conjuntos de dados, mapeiem colunas críticas (Data, Categoria, Valor) e explorem métricas em um painel interativo com filtros de tempo e categorias.
 
@@ -70,7 +70,3 @@ Para rodar os testes unitários da aplicação, vá até a pasta raiz do `backen
 ```bash
 pytest tests/
 ```
-
-## 🤖 Relatórios de IA
-
-Este projeto foi construído com o Gemini CLI (agente autônomo de terminal). Os relatórios de avaliação sobre os laboratórios metodológicos propostos estão disponíveis na pasta `docs/`.

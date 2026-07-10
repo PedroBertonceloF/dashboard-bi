@@ -1,54 +1,76 @@
-# 📊 Dashboard de BI — Claude vs. Gemini CLI
+# WEB-02 BI Dashboard 📊
 
-Estudo comparativo de geração de código assistida por IA, feito para a disciplina de **Tópicos Especiais em Computação (UFMS)**. O mesmo problema (**WEB-02 — dashboard de BI/analytics a partir de CSV**) foi resolvido duas vezes, de forma independente, por duas ferramentas de IA diferentes — mesma especificação, mesmos critérios de avaliação, resultados comparados lado a lado.
+Uma aplicação Client-Server completa projetada para ingestão, higienização e visualização interativa de dados tabulares (CSV). O sistema permite que os usuários façam upload de conjuntos de dados, mapeiem colunas críticas (Data, Categoria, Valor) e explorem métricas em um painel interativo com filtros de tempo e categorias.
 
-<p>
-  <img alt="Claude" src="https://img.shields.io/badge/Claude-chat_assistant-CC785C">
-  <img alt="Gemini CLI" src="https://img.shields.io/badge/Gemini_CLI-agente_aut%C3%B4nomo-4285F4?logo=googlegemini&logoColor=white">
-  <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white">
-  <img alt="React" src="https://img.shields.io/badge/React-frontend-61DAFB?logo=react&logoColor=black">
-</p>
+Desenvolvido para a disciplina de **Tópicos Especiais em Computação (UFMS)**, com isolamento rigoroso de regras de negócio e segurança.
 
-## 📊 Ver a comparação
+## 🚀 Funcionalidades
 
-👉 Abra [`apresentacao.html`](./apresentacao.html) no navegador — tem o problema, a metodologia, os laboratórios de avaliação, os resultados e o histórico de prompts das duas implementações, com os dois dashboards lado a lado.
+- **Autenticação Segura:** Sistema completo de Login/Registro utilizando hash de senhas (`bcrypt`) e tokens JWT de curta duração. Proteção nativa contra injeção SQL via SQLAlchemy ORM.
+- **Ingestão e Higienização de Dados (CSV):** Validação rigorosa de dados. Linhas corrompidas ou com dados faltantes (nas colunas obrigatórias) são sumariamente descartadas para preservar a integridade matemática, sem "alucinar" ou preencher números falsos.
+- **Remoção Global de Espaços:** Limpeza automática de espaços em branco não intencionais (whitespace stripping) em todas as colunas de texto do conjunto de dados.
+- **Dashboard Interativo:**
+  - **KPIs em Tempo Real:** Soma Total, Média e Contagem de Registros válidos.
+  - **Gráficos Dinâmicos:** Gráficos de Linha (Série Temporal) e de Barras (Distribuição de Categorias) estilizados com dark-mode, construídos sobre a biblioteca `recharts`.
+- **Filtros Avançados:** Filtre todo o Dashboard definindo um intervalo de datas (`Start Date`, `End Date`) e pesquisando múltiplas categorias específicas simultaneamente.
+- **Exportação (Download):** Os usuários podem baixar um relatório final em CSV (`Export Dashboard to CSV`) contendo a versão higienizada dos dados da sua sessão de pesquisa associados às métricas geradas.
 
-## Estrutura
+## 🛠️ Tecnologias Utilizadas
 
+### Frontend
+- **React** (TypeScript)
+- **Vite** (Build Tool super-rápida)
+- **Recharts** (Visualização de dados/Gráficos)
+- **Vanilla CSS** (Estilização responsiva sem dependências pesadas de framework)
+
+### Backend
+- **Python / FastAPI**
+- **Pandas** (Motor principal para parsing vetorizado e limpeza veloz do CSV)
+- **SQLite / SQLAlchemy** (Banco de dados e ORM)
+- **Bcrypt & PyJWT** (Segurança e Autenticação)
+
+## 📁 Estrutura do Projeto
+
+```text
+./
+├── backend/                  # API FastAPI (Python)
+│   ├── main.py               # Rotas e Endpoints
+│   ├── analytics.py          # Lógica de cálculo de KPIs, Filtros e agregação do Pandas
+│   ├── dataset_ingestion.py  # Upload de arquivos, validação estrita e limpeza CSV
+│   ├── security.py           # Configurações de hashing e emissão de JWT
+│   ├── models.py             # Modelos do BD (SQLAlchemy)
+│   └── tests/                # Suíte de testes automatizados (pytest)
+│
+├── frontend/                 # Interface React (TypeScript)
+│   ├── vite.config.ts        # Configuração (inclui regras de proxy local)
+│   └── src/
+│       ├── pages/
+│       │   └── Dashboard.tsx # Componente mestre (Wizard de Upload -> Mapping -> Visualização)
+│       └── services/
+│           └── api.ts        # Ponto central para as chamadas de rede (fetch) e tipagem
+│
+├── docs/                     # Documentação de Arquitetura (ADRs) e Issues do Projeto
+└── execução/                 # Manuais de como rodar a aplicação localmente
 ```
-Gemini/    implementação gerada com Gemini CLI (agente autônomo de terminal)
-Claude/    implementação gerada com Claude (assistente de chat)
-```
 
-Cada pasta é um projeto completo e independente — backend (FastAPI) + frontend (React + Vite) — com sua própria documentação (`docs/PRD.md`, `docs/adr/`, `docs/issues/`) e diário de iteração real (`RelatorioNovo.txt`), não só o resultado final.
+## 🏁 Como Executar (Ambiente Local)
 
-## O problema (WEB-02)
+Temos um arquivo dedicado explicando como subir o ambiente localmente.
+👉 **Por favor, consulte [execução/COMO_RODAR.md](./execução/COMO_RODAR.md) para o passo-a-passo detalhado de instalação.**
 
-Ingerir um CSV "sujo", higienizar os dados, mapear colunas (data/categoria/valor) via assistente de 2 passos, e gerar um dashboard com KPIs, série temporal, gráfico por categoria e exportação — com filtros interativos que recalculam tudo dinamicamente.
+*Em resumo:*
+1. **Backend:** Instale o Python, crie um `venv`, instale os `requirements.txt` e inicie o servidor com `uvicorn main:app --reload --port 8001`.
+2. **Frontend:** Instale o Node.js, rode `npm install` dentro da pasta `frontend/` e inicie com `npm run dev`.
 
-## Rodando localmente
+## 🧪 Suíte de Testes e Metodologia
 
-Cada implementação roda de forma independente:
+Todo o núcleo lógico do sistema (`dataset_ingestion` e `analytics`) e as rotas críticas de autenticação foram construídos sob a metodologia de **Test-Driven Development (TDD)**. 
 
+Para rodar os testes unitários da aplicação, vá até a pasta raiz do `backend/` e execute:
 ```bash
-cd Gemini   # ou Claude
-cat COMOFAZER.txt   # enunciado do trabalho
-# backend
-cd backend && pip install -r requirements.txt && python main.py
-# frontend (outro terminal)
-cd frontend && npm install && npm run dev
+pytest tests/
 ```
 
-Veja `Gemini/README.md` e `Claude/QUICK_START.md` para detalhes específicos de cada uma.
+## 🤖 Relatórios de IA
 
-## Por que isso importa
-
-Não é só "duas cópias do mesmo trabalho" — é uma avaliação metódica de como um agente autônomo de terminal (Gemini CLI) se compara a um assistente de chat (Claude) no mesmo problema real, com os mesmos critérios de correção, qualidade e organização de código. A apresentação documenta prompts, decisões e o "antes/depois" de cada laboratório de avaliação.
-
-## Licença
-
-[MIT](./LICENSE)
-
-## Autor
-
-[Pedro Bertoncelo](https://github.com/PedroBertonceloF) — Ciência da Computação (UFMS)
+Este projeto foi construído com o Gemini CLI (agente autônomo de terminal). Os relatórios de avaliação sobre os laboratórios metodológicos propostos estão disponíveis na pasta `docs/`.
